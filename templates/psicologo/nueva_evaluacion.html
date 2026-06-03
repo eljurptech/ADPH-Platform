@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3><i class="fas fa-send"></i> Nueva Evaluación</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="empresa_id" class="form-label">Empresa *</label>
+                            <select class="form-control" id="empresa_id" name="empresa_id" required>
+                                <option value="">Seleccione una empresa...</option>
+                                {% for empresa in empresas %}
+                                <option value="{{ empresa.id }}">{{ empresa.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="test_id" class="form-label">Test *</label>
+                            <select class="form-control" id="test_id" name="test_id" required>
+                                <option value="">Seleccione un test...</option>
+                                {% for test in tests %}
+                                <option value="{{ test.id }}">{{ test.nombre }} ({{ test.duracion_estimada }} min)</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="emails" class="form-label">Emails de los Trabajadores *</label>
+                        <textarea class="form-control" id="emails" name="emails" rows="5" 
+                                  placeholder="Ingresa los emails uno por línea o separados por coma:
+juan@empresa.com
+maria@empresa.com
+carlos@empresa.com" required></textarea>
+                        <small class="text-muted">Cada trabajador recibirá un link único para responder el test</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="fecha_expiracion" class="form-label">Fecha de expiración (opcional)</label>
+                        <input type="date" class="form-control" id="fecha_expiracion" name="fecha_expiracion">
+                        <small class="text-muted">Si no seleccionas, expirará en 7 días</small>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Límites de tu plan:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Máximo {{ current_user.max_empresas }} empresas</li>
+                            <li>Máximo {{ current_user.max_trabajadores_mes }} trabajadores por mes</li>
+                        </ul>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-send"></i> Enviar Evaluaciones
+                    </button>
+                    <a href="{{ url_for('psicologo_evaluaciones') }}" class="btn btn-secondary">Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

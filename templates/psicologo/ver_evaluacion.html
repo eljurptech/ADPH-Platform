@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h3><i class="fas fa-file-alt"></i> Detalle de Evaluación</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Trabajador:</strong> {{ evaluacion.trabajador.nombre if evaluacion.trabajador else 'N/A' }}</p>
+                    <p><strong>Email:</strong> {{ evaluacion.trabajador.email if evaluacion.trabajador else 'N/A' }}</p>
+                    <p><strong>Puesto:</strong> {{ evaluacion.trabajador.puesto if evaluacion.trabajador else 'N/A' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Empresa:</strong> {{ evaluacion.empresa.nombre if evaluacion.empresa else 'N/A' }}</p>
+                    <p><strong>Test:</strong> {{ test.nombre if test else 'N/A' }}</p>
+                    <p><strong>Fecha:</strong> {{ evaluacion.created_at.strftime('%d/%m/%Y %H:%M') }}</p>
+                </div>
+            </div>
+
+            <hr>
+
+            <h4>Resultados</h4>
+            {% if evaluacion.estado == 'completada' %}
+                <div class="alert alert-success">
+                    <p><strong>Puntaje Total:</strong> {{ evaluacion.puntaje_total }}/5</p>
+                    <p><strong>Nivel de Riesgo:</strong> 
+                        <span class="badge 
+                            {% if evaluacion.nivel_riesgo == 'Alto' %}bg-danger
+                            {% elif evaluacion.nivel_riesgo == 'Medio' %}bg-warning
+                            {% else %}bg-success{% endif %}">
+                            {{ evaluacion.nivel_riesgo }}
+                        </span>
+                    </p>
+                    <p><strong>Recomendaciones:</strong> {{ evaluacion.recomendaciones }}</p>
+                </div>
+
+                <h4>Respuestas del Trabajador</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Pregunta</th>
+                                <th>Respuesta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pregunta, respuesta in respuestas.items() %}
+                            <tr>
+                                <td>{{ pregunta }}</td>
+                                <td>
+                                    {% set valor = respuesta|int %}
+                                    {% if valor == 1 %}1 - Nunca
+                                    {% elif valor == 2 %}2 - Raramente
+                                    {% elif valor == 3 %}3 - A veces
+                                    {% elif valor == 4 %}4 - Frecuentemente
+                                    {% else %}5 - Siempre{% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-hourglass-half"></i> 
+                    El trabajador aún no ha respondido la evaluación.
+                    <br>
+                    <strong>Link para responder:</strong> 
+                    <code>{{ request.url_root }}evaluar/{{ evaluacion.token_unico }}</code>
+                </div>
+            {% endif %}
+
+            <a href="{{ url_for('psicologo_evaluaciones') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+            {% if evaluacion.estado == 'completada' %}
+            <a href="#" class="btn btn-primary">
+                <i class="fas fa-download"></i> Descargar PDF
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

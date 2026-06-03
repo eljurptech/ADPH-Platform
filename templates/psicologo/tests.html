@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2><i class="fas fa-file-alt"></i> Biblioteca de Tests</h2>
+    <p class="text-muted">Selecciona el test que deseas aplicar a los trabajadores</p>
+
+    <div class="row">
+        {% for test in tests %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header 
+                    {% if test.categoria == 'psicosocial' %}bg-danger
+                    {% elif test.categoria == 'preocupacional' %}bg-success
+                    {% elif test.categoria == 'clima' %}bg-info
+                    {% else %}bg-primary{% endif %} text-white">
+                    <h5>{{ test.nombre }}</h5>
+                </div>
+                <div class="card-body">
+                    <p>{{ test.descripcion }}</p>
+                    <p><i class="fas fa-clock"></i> Duración: {{ test.duracion_estimada }} minutos</p>
+                    <p><i class="fas fa-tag"></i> Categoría: {{ test.categoria|title }}</p>
+                </div>
+                <div class="card-footer bg-white">
+                    <a href="{{ url_for('psicologo_nueva_evaluacion') }}?test={{ test.id }}" class="btn btn-primary">
+                        <i class="fas fa-send"></i> Usar este Test
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

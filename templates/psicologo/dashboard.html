@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <!-- Bienvenida -->
+    <div class="alert alert-success">
+        <h4><i class="fas fa-hand-wave"></i> ¡Bienvenido, {{ current_user.nombre }}!</h4>
+        <p>Aquí está el resumen de tu actividad profesional.</p>
+        {% if dias_restantes < 7 %}
+        <div class="alert alert-warning mt-2">
+            <i class="fas fa-clock"></i> Tu plan vence en {{ dias_restantes }} días. 
+            <a href="{{ url_for('psicologo_mi_plan') }}">Renovar ahora</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Tarjetas de estadísticas -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-center bg-primary text-white">
+                <div class="card-body">
+                    <i class="fas fa-building fa-3x"></i>
+                    <h2 class="mt-2">{{ total_empresas }}</h2>
+                    <p>Empresas Clientes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center bg-success text-white">
+                <div class="card-body">
+                    <i class="fas fa-chart-line fa-3x"></i>
+                    <h2 class="mt-2">{{ total_evaluaciones }}</h2>
+                    <p>Evaluaciones Realizadas</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center bg-warning text-white">
+                <div class="card-body">
+                    <i class="fas fa-hourglass-half fa-3x"></i>
+                    <h2 class="mt-2">{{ evaluaciones_pendientes }}</h2>
+                    <p>Pendientes por Responder</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones rápidas -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="fas fa-bolt"></i> Acciones Rápidas</h5>
+                </div>
+                <div class="card-body">
+                    <a href="{{ url_for('psicologo_agregar_empresa') }}" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-plus-circle"></i> Agregar Empresa
+                    </a>
+                    <a href="{{ url_for('psicologo_nueva_evaluacion') }}" class="btn btn-outline-success me-2">
+                        <i class="fas fa-send"></i> Nueva Evaluación
+                    </a>
+                    <a href="{{ url_for('psicologo_tests') }}" class="btn btn-outline-info">
+                        <i class="fas fa-file-alt"></i> Ver Tests
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Evaluaciones recientes -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5><i class="fas fa-clock"></i> Evaluaciones Recientes</h5>
+                </div>
+                <div class="card-body">
+                    {% if evaluaciones_recientes %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Trabajador</th>
+                                    <th>Empresa</th>
+                                    <th>Test</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for eval in evaluaciones_recientes %}
+                                <tr>
+                                    <td>{{ eval.trabajador.nombre if eval.trabajador else 'N/A' }}</td>
+                                    <td>{{ eval.empresa.nombre if eval.empresa else 'N/A' }}</td>
+                                    <td>{{ eval.test.nombre if eval.test else 'N/A' }}</td>
+                                    <td>{{ eval.created_at.strftime('%d/%m/%Y') }}</td>
+                                    <td>
+                                        {% if eval.estado == 'completada' %}
+                                        <span class="badge bg-success">Completada</span>
+                                        {% elif eval.estado == 'pendiente' %}
+                                        <span class="badge bg-warning">Pendiente</span>
+                                        {% else %}
+                                        <span class="badge bg-danger">Expirada</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('psicologo_ver_evaluacion', evaluacion_id=eval.id) }}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-center">No hay evaluaciones aún. <a href="{{ url_for('psicologo_nueva_evaluacion') }}">Crea tu primera evaluación</a></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3>{{ test.nombre }}</h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <p><strong>Trabajador:</strong> {{ evaluacion.trabajador.nombre }}</p>
+                    <p><strong>Empresa:</strong> {{ evaluacion.empresa.nombre }}</p>
+                    <p><strong>Instrucciones:</strong> {{ test.instrucciones }}</p>
+                </div>
+
+                <form id="testForm">
+                    {% for pregunta in preguntas %}
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">{{ loop.index }}. {{ pregunta }}</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="q{{ loop.index0 }}" id="q{{ loop.index0 }}_1" value="1" required>
+                            <label class="btn btn-outline-primary" for="q{{ loop.index0 }}_1">1<br><small>Nunca</small></label>
+                            
+                            <input type="radio" class="btn-check" name="q{{ loop.index0 }}" id="q{{ loop.index0 }}_2" value="2">
+                            <label class="btn btn-outline-primary" for="q{{ loop.index0 }}_2">2<br><small>Raramente</small></label>
+                            
+                            <input type="radio" class="btn-check" name="q{{ loop.index0 }}" id="q{{ loop.index0 }}_3" value="3">
+                            <label class="btn btn-outline-primary" for="q{{ loop.index0 }}_3">3<br><small>A veces</small></label>
+                            
+                            <input type="radio" class="btn-check" name="q{{ loop.index0 }}" id="q{{ loop.index0 }}_4" value="4">
+                            <label class="btn btn-outline-primary" for="q{{ loop.index0 }}_4">4<br><small>Frecuente</small></label>
+                            
+                            <input type="radio" class="btn-check" name="q{{ loop.index0 }}" id="q{{ loop.index0 }}_5" value="5">
+                            <label class="btn btn-outline-primary" for="q{{ loop.index0 }}_5">5<br><small>Siempre</small></label>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <button type="submit" class="btn btn-success w-100 py-2">
+                        <i class="fas fa-check-circle"></i> Enviar Respuestas
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$('#testForm').on('submit', function(e) {
+    e.preventDefault();
+    
+    var respuestas = {};
+    $(this).serializeArray().forEach(function(item) {
+        respuestas[item.name] = item.value;
+    });
+    
+    $.ajax({
+        url: '/guardar_respuestas/{{ evaluacion.token_unico }}',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({respuestas: respuestas}),
+        success: function() {
+            window.location.href = '/gracias';
+        },
+        error: function() {
+            alert('Error al guardar las respuestas. Intenta nuevamente.');
+        }
+    });
+});
+</script>
+{% endblock %}

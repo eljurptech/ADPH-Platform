@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2><i class="fas fa-chart-line"></i> Mis Evaluaciones</h2>
+    <p class="text-muted">Historial de todas las evaluaciones enviadas</p>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Trabajador</th>
+                            <th>Empresa</th>
+                            <th>Test</th>
+                            <th>Fecha Envío</th>
+                            <th>Estado</th>
+                            <th>Puntaje</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for eval in evaluaciones %}
+                        <tr>
+                            <td>{{ eval.id }}</td>
+                            <td>{{ eval.trabajador.nombre if eval.trabajador else 'N/A' }}</td>
+                            <td>{{ eval.empresa.nombre if eval.empresa else 'N/A' }}</td>
+                            <td>{{ eval.test.nombre if eval.test else 'N/A' }}</td>
+                            <td>{{ eval.created_at.strftime('%d/%m/%Y') }}</td>
+                            <td>
+                                {% if eval.estado == 'completada' %}
+                                <span class="badge bg-success">Completada</span>
+                                {% elif eval.estado == 'pendiente' %}
+                                <span class="badge bg-warning">Pendiente</span>
+                                {% else %}
+                                <span class="badge bg-danger">Expirada</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if eval.puntaje_total %}
+                                {{ eval.puntaje_total }}/5
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('psicologo_ver_evaluacion', evaluacion_id=eval.id) }}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center">No hay evaluaciones aún</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

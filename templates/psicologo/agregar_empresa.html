@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3><i class="fas fa-plus-circle"></i> Agregar Nueva Empresa</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre de la Empresa *</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rubro" class="form-label">Rubro / Industria</label>
+                        <input type="text" class="form-control" id="rubro" name="rubro">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email_contacto" class="form-label">Email de Contacto</label>
+                        <input type="email" class="form-control" id="email_contacto" name="email_contacto">
+                    </div>
+                    <div class="mb-3">
+                        <label for="telefono" class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="telefono" name="telefono">
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> 
+                        <strong>Límite de empresas:</strong> {{ current_user.max_empresas }} empresas
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Guardar Empresa
+                    </button>
+                    <a href="{{ url_for('psicologo_empresas') }}" class="btn btn-secondary">Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
